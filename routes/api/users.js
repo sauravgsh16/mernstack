@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
 const passport = require('passport');
 const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 
 // @route   GET api/users/test
 // @desc    Tests users route
@@ -83,13 +84,20 @@ router.post("/register", async (req, res) => {
 // @desc    Logins a user
 // @access  Public
 router.post("/login", (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 
   const user = User.findOne({ email })
     .then(user => {
       if (!user) {
-        return res.status(404).json({ err: "User not found" });
+        errors.email = "User not found"
+        return res.status(404).json(errors);
       } else {
         // Check Password
         bcrypt.compare(password, user.password)
@@ -114,7 +122,8 @@ router.post("/login", (req, res) => {
                   })
                 });
             } else {
-              return res.status(404).json({ err: "Incorrect password" });
+              errors.password = "Incorrect password"
+              return res.status(404).json(errors);
             }
           })
       }
