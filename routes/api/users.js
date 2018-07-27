@@ -1,31 +1,44 @@
-const router = require('express').Router();
-const User = require('../../models/User');
-const bcrypt = require('bcryptjs');
-const gravatar = require('gravatar');
-
+const router = require("express").Router();
+const User = require("../../models/User");
+const bcrypt = require("bcryptjs");
+const gravatar = require("gravatar");
+const jwt = require('jsonwebtoken');
+const keys = require('../../config/keys');
+const passport = require('passport');
+const validateRegisterInput = require('../../validation/register');
 
 // @route   GET api/users/test
 // @desc    Tests users route
 // @access  Public
-router.get('/test', (req, res) => {
-  res.json({msg: "Wroks"});
+router.get("/test", (req, res) => {
+  res.json({
+    msg: "Works"
+  });
 });
 
 // @route   GET api/users/register
 // @desc    Register a new user
 // @access  Public
-router.post('/register', async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
+router.post("/register", async (req, res) => {
+
+  const { errors, isValid } = validateRegisterInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  const user = await User.findOne({
+    email: req.body.email
+  });
 
   if (user) {
-    res.status(400).json({
-      email: "Email already exists"
-    });
+    errors.email = "Email already exists"
+    res.status(400).json(errors);
   } else {
     const avatar = gravatar.url(req.body.email, {
-      s: 200,  // Size
-      r: 'pg', // Rating
-      d: 'mm'  // Default
+      s: 200, // Size
+      r: "pg", // Rating
+      d: "mm" // Default
     });
 
     const newUser = new User({
@@ -40,7 +53,7 @@ router.post('/register', async (req, res) => {
       try {
         const hash = await bcrypt.hash(newUser.password, salt);
         newUser.password = hash;
-        try{
+        try {
           const user = await newUser.save();
           res.json(user);
         } catch (err) {
@@ -69,19 +82,50 @@ router.post('/register', async (req, res) => {
 // @route   GET api/users/login
 // @desc    Logins a user
 // @access  Public
-router.post('/login', (req, res) => {
+router.post("/login", (req, res) => {
   const email = req.body.email;
-  const password = req.body.password
+  const password = req.body.password;
 
-  const user = await User.findOne({ email: email });
+  const user = User.findOne({ email })
+    .then(user => {
+      if (!user) {
+        return res.status(404).json({ err: "User not found" });
+      } else {
+        // Check Password
+        bcrypt.compare(password, user.password)
+          .then(isMatch => {
+            if (isMatch) {
+              // User Matched
+              // Create JWT payload
+              const payload = {
+                id: user.id, name: user.name, avatar: user.avatar
+              }
+              // Sign Token
+              // takes in a payload, a secret key and an object which say
+              // when to expire the token
+              jwt.sign(
+                payload,
+                keys.secretOrKey,
+                { expiresIn: 3600 },
+                (err, token) => {
+                  res.json({
+                    success: true,
+                    token: 'Bearer ' + token
+                  })
+                });
+            } else {
+              return res.status(404).json({ err: "Incorrect password" });
+            }
+          })
+      }
+    });
+});
 
-  if (user) {
-
-  } else {
-    res.status(404).json();
-  }
-
-
+// @route: GET /api/user/current
+// @desc:  Gets the current user
+// @access: protected
+router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.json({ user: req.user });
 });
 
 
