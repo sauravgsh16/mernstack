@@ -137,5 +137,12 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
   res.json({ user: req.user });
 });
 
-
+// @route: GET /api/user/
+// @desc:  Gets all users
+// @access: Public
+router.get('/', (req, res) => {
+  User.find()
+    .then(users => res.json(users))
+    .catch(err => res.status(400).json(err));
+})
 module.exports = router;
