@@ -145,4 +145,5 @@ router.get('/', (req, res) => {
     .then(users => res.json(users))
     .catch(err => res.status(400).json(err));
 })
+
 module.exports = router;
