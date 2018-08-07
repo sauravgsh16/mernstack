@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import jwt_decode from 'jwt-decode';
+import setAuthHeader from './utils/setAuthHeader'
+import { setCurrentUser, logoutUser } from './actions/authActions';
 
 import Navbar from '../src/components/layout/Navbar';
 import Footer from '../src/components/layout/Footer';
@@ -10,6 +13,27 @@ import Register from './components/auth/Register';
 import store from './store';
 
 import './App.css';
+
+// Check is user is logged in
+// This prevents the state to return back to initialState on page reload 
+// Check for token
+if (localStorage.jwtToken) {
+  setAuthHeader(localStorage.jwtToken);
+  // decode the token to get user info and and expiration
+  const decoded = jwt_decode(localStorage.jwtToken);
+  // Set user and isAuthenticate
+  store.dispatch(setCurrentUser(decoded));
+  // Check if expiration date of token has reached
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+    // Logout User
+    store.dispatch(logoutUser());
+    // TODO: Clear user profile
+    // Redirect to login
+    window.location.href = '/login';
+  }
+}
+
 
 class App extends Component {
   render() {

@@ -1,4 +1,5 @@
-import { TEST_DISPATCH } from '../actions/types';
+import isEmpty from '../validators/is-Empty';
+import { SET_CURRENT_USER } from '../actions/types';
 
 const initialState = {
   isAuthenticated: false,
@@ -6,12 +7,11 @@ const initialState = {
 };
 
 const authReducer = (state=initialState, action) => {
-
   const nextState = Object.assign({}, state);
-
   switch (action.type) {
-    case TEST_DISPATCH:
-      nextState.user = action.payload;
+    case SET_CURRENT_USER:
+      nextState.isAuthenticated = !isEmpty(action.payload);
+      nextState.user = action.payload
       return nextState;
     default:
       return state;
