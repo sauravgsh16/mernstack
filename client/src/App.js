@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import jwt_decode from 'jwt-decode';
 import setAuthHeader from './utils/setAuthHeader'
 import { setCurrentUser, logoutUser } from './actions/authActions';
+import { clearCurrentProfile } from './actions/profileActions';
+
+import PrivateRoute from './components/commons/PrivateRoute';
 
 import Navbar from '../src/components/layout/Navbar';
 import Footer from '../src/components/layout/Footer';
 import Landing from '../src/components/layout/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import Dashboard from './components/dashboard/Dashboard';
 import store from './store';
 
 import './App.css';
@@ -28,7 +32,9 @@ if (localStorage.jwtToken) {
   if (decoded.exp < currentTime) {
     // Logout User
     store.dispatch(logoutUser());
-    // TODO: Clear user profile
+    // Clear current user profile
+    store.dispatch(clearCurrentProfile());
+
     // Redirect to login
     window.location.href = '/login';
   }
@@ -38,7 +44,7 @@ if (localStorage.jwtToken) {
 class App extends Component {
   render() {
     return (
-      <Provider store={ store }>
+      <Provider store={store}>
         <Router>
           <div className="App">
             <Navbar />
@@ -46,6 +52,9 @@ class App extends Component {
             <div>
               <Route exact path='/login' component={Login} />
               <Route exact path='/register' component={Register} />
+              <Switch>
+                <PrivateRoute exact path='/dashboard' component={Dashboard} />
+              </Switch>
             </div>
             <Footer />
           </div>
