@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-
+import { connect } from 'react-redux';
 import { registerUser } from '../../actions/authActions';
-import TextFieldGroup from '../commons/TextFieldGroup';
+import TextFieldGroup from '../common/TextFieldGroup';
 
 class Register extends Component {
   constructor() {
@@ -16,11 +15,11 @@ class Register extends Component {
       password2: '',
       errors: {}
     };
-    // This is done because the onChange of each input does not recognise 'this'
-    // Thus, we need to bind 'this' for each onChange
+
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
+
   componentDidMount() {
     if (this.props.auth.isAuthenticated) {
       this.props.history.push('/dashboard');
@@ -33,12 +32,12 @@ class Register extends Component {
     }
   }
 
-  onChange(event) {
-    this.setState({ [event.target.name]: event.target.value })
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
   }
 
-  onSubmit(event) {
-    event.preventDefault();
+  onSubmit(e) {
+    e.preventDefault();
 
     const newUser = {
       name: this.state.name,
@@ -105,17 +104,12 @@ class Register extends Component {
   }
 }
 
-// propsType
-// React wants any properties present in the component, should be mapped to proptypes
-// This is a good practise in react
 Register.propTypes = {
   registerUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
 
-// This is used to so that components inside react can access the state inside redux
-// Video 40 
 const mapStateToProps = state => ({
   auth: state.auth,
   errors: state.errors

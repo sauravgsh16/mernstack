@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import TextFieldGroup from '../commons/TextFieldGroup';
-import TextAreaFieldGroup from '../commons/TextAreaFieldGroup';
-import InputGroup from '../commons/InputGroup';
-import SelectListGroup from '../commons/SelectListGroup';
+import TextFieldGroup from '../common/TextFieldGroup';
+import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
+import InputGroup from '../common/InputGroup';
+import SelectListGroup from '../common/SelectListGroup';
 import { createProfile } from '../../actions/profileActions';
 
 class CreateProfile extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -40,8 +39,8 @@ class CreateProfile extends Component {
     }
   }
 
-  onSubmit(event) {
-    event.preventDefault();
+  onSubmit(e) {
+    e.preventDefault();
 
     const profileData = {
       handle: this.state.handle,

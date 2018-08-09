@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { loginUser } from '../../actions/authActions';
-import TextFieldGroup from '../commons/TextFieldGroup'
-
+import TextFieldGroup from '../common/TextFieldGroup';
 
 class Login extends Component {
   constructor() {
@@ -26,31 +25,30 @@ class Login extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
-      // If user is authenticated then redirect to dashboard
       this.props.history.push('/dashboard');
     }
+
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
     }
   }
 
-  onChange(event) {
-    this.setState({ [event.target.name]: event.target.value })
-  }
+  onSubmit(e) {
+    e.preventDefault();
 
-  onSubmit(event) {
-    event.preventDefault();
-
-    const loginData = {
+    const userData = {
       email: this.state.email,
       password: this.state.password
-    }
+    };
 
-    this.props.loginUser(loginData);
+    this.props.loginUser(userData);
+  }
+
+  onChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
   }
 
   render() {
-
     const { errors } = this.state;
 
     return (
