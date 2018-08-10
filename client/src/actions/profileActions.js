@@ -16,16 +16,17 @@ export const getCurrentProfile = () => dispatch => {
       dispatch({
         type: GET_PROFILE,
         payload: res.data
-    }))
-    // In catch we are dispatching call to GET_PROFILE because
-    // there might be a user who has not created a profile
-    .catch(err => dispatch({
-      type: GET_PROFILE,
-      payload: {}
-    }));
-}
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: {}
+      })
+    );
+};
 
-// CREATE PROFILE
+// Create Profile
 export const createProfile = (profileData, history) => dispatch => {
   axios
     .post('/api/profile', profileData)
@@ -45,7 +46,7 @@ export const setProfileLoading = () => {
   };
 };
 
-// CLEAR CURRENT PROFILE
+// Clear profile
 export const clearCurrentProfile = () => {
   return {
     type: CLEAR_CURRENT_PROFILE
