@@ -22,7 +22,7 @@ module.exports = function validateEducationInput(data) {
   }
   
   if (Validator.isEmpty(data.from)) {
-    errors.From = 'From date field is required';
+    errors.from = 'From date field is required';
   }
 
   return {
