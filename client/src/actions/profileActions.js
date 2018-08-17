@@ -66,7 +66,7 @@ export const addExperience = (expData, history) => dispatch => {
   axios
     .post('/api/profile/experience', expData)
     .then(res => history.push('/dashboard'))
-    .catch(err => 
+    .catch(err =>
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
@@ -79,7 +79,7 @@ export const addEducation = (eduData, history) => dispatch => {
   axios
     .post('/api/profile/education', eduData)
     .then(res => history.push('/dashboard'))
-    .catch(err => 
+    .catch(err =>
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
@@ -109,13 +109,13 @@ export const deleteExperience = (id) => dispatch => {
 export const deleteEducation = (id) => dispatch => {
   axios
     .delete(`/api/profile/education/${id}`)
-    .then(res => 
+    .then(res =>
       dispatch({
         type: GET_PROFILE,
         payload: res.data
       })
     )
-    .catch(err => 
+    .catch(err =>
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
@@ -129,19 +129,38 @@ export const getProfiles = () => dispatch => {
   dispatch(setProfileLoading());
   axios
     .get('/api/profile/all')
-    .then(res => 
+    .then(res =>
       dispatch({
         type: GET_PROFILES,
         payload: res.data
       })
     )
-    .catch(err => 
+    .catch(err =>
       dispatch({
         type: GET_PROFILES,
         payload: null
       })
     );
 };
+
+// Individual profile actions
+export const getProfileByHandle = (handle) => dispatch => {
+  axios
+    .get(`/api/profile/handle/${handle}`)
+    .then(res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: null
+      })
+    );
+}
+
 
 // Profile loading
 export const setProfileLoading = () => {
