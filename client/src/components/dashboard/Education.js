@@ -38,9 +38,11 @@ class Education extends Component {
         <h4 className="md-4">Education Details</h4>
         <table className="table">
           <thead>
-            <th>School/College</th>
-            <th>Degree</th>
-            <th>Duration</th>
+            <tr>
+              <th>School/College</th>
+              <th>Degree</th>
+              <th>Duration</th>
+            </tr>
           </thead>
           <tbody>
             {education}

@@ -145,6 +145,7 @@ export const getProfiles = () => dispatch => {
 
 // Individual profile actions
 export const getProfileByHandle = (handle) => dispatch => {
+  dispatch(setProfileLoading());
   axios
     .get(`/api/profile/handle/${handle}`)
     .then(res =>
